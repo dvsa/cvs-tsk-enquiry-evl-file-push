@@ -1,6 +1,6 @@
 module.exports = {
   verbose: true,
-  transform: {'\\.ts$': ['ts-jest']},
+  transform: { '\\.ts$': ['ts-jest'] },
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
   coverageDirectory: '<rootDir>/coverage/',
   coverageThreshold: {
@@ -8,7 +8,7 @@ module.exports = {
       branches: 75,
       functions: 75,
       lines: 75,
-      statements: 75
-    }
-  }
+      statements: 75,
+    },
+  },
 };

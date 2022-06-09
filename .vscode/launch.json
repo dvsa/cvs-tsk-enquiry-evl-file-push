@@ -49,6 +49,6 @@
       "protocol": "inspector",
       "stopOnEntry": false,
       "sourceMaps": true
-    },
+    }
   ]
 }

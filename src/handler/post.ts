@@ -1,5 +1,9 @@
 import 'dotenv/config';
-import type { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
+import type {
+  APIGatewayProxyEvent,
+  APIGatewayProxyResult,
+  Context,
+} from 'aws-lambda';
 import { createLogger, Logger } from '../util/logger';
 
 /**
@@ -9,9 +13,14 @@ import { createLogger, Logger } from '../util/logger';
  * @param {Context} context
  * @returns {Promise<APIGatewayProxyResult>}
  */
-export const handler = async (event: APIGatewayProxyEvent, context: Context): Promise<APIGatewayProxyResult> => {
+export const handler = async (
+  event: APIGatewayProxyEvent,
+  context: Context,
+): Promise<APIGatewayProxyResult> => {
   const logger: Logger = createLogger(event, context);
-  const body: Record<string, unknown> = <Record<string, unknown>> JSON.parse(event.body);
+  const body: Record<string, unknown> = <Record<string, unknown>>(
+    JSON.parse(event.body)
+  );
 
   logger.info(JSON.stringify({ body }));
 

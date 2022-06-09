@@ -4,8 +4,8 @@ import { handler } from '../../src/handler/cloudWatchEvent';
 
 describe('Test CloudWatch Event Lambda Function', () => {
   test('should return 200 with a success message', async () => {
-    const eventMock: ScheduledEvent = <ScheduledEvent> { };
-    const contextMock: Context = <Context> { awsRequestId: v4() };
+    const eventMock: ScheduledEvent = <ScheduledEvent>{};
+    const contextMock: Context = <Context>{ awsRequestId: v4() };
 
     const res: Record<string, unknown> = await handler(eventMock, contextMock);
 
