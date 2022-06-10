@@ -109,3 +109,9 @@ dist
 
 # Build artifacts
 .build
+
+# Testing artifacts
+.reports
+
+# Sonar scanner artifacts
+.scannerwork
