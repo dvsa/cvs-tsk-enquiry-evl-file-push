@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import { handler } from '../../src/handler/s3Event';
 import event from '../resources/s3event.json';
 
-describe('Test CloudWatch Event Lambda Function', () => {
+describe('Test S3 Event Lambda Function', () => {
   test('should return 200 with a success message', async () => {
     const eventMock: S3Event = event as S3Event;
     const contextMock: Context = <Context>{ awsRequestId: v4() };
