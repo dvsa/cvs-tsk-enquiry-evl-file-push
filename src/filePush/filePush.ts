@@ -1,7 +1,6 @@
-import Client = require('ssh2-sftp-client');
+import Client from 'ssh2-sftp-client';
 
-
-export const filePush = (filename: string) => {
+export const filePush = async (filename: string) => {
 
   const config = {
     host: process.env.SFTP_Address,
@@ -13,7 +12,7 @@ export const filePush = (filename: string) => {
 
   const remoteFileLocation = '/path/to/save/' + filename;
 
-  sftp.connect(config).then(() => {
+  await sftp.connect(config).then(() => {
     return sftp.fastPut(filename, remoteFileLocation);
   }).then(() => {
     return sftp.end();
