@@ -13,14 +13,14 @@ import { filePull } from '../filePull/fromS3';
 export const handler = async (
   event: S3Event,
 ): Promise<Record<string, unknown>> => {
-  const bucketName = event.Records[0].s3.bucket.name;
   const record: S3EventRecord = event.Records[0];
   const evlFile: Buffer = await filePull(record);
+  const fileContent = evlFile.toString();
 
-  logger.debug(`File contents ${evlFile.toString()}`);
+  logger.debug(`File contents ${fileContent}`);
 
   return Promise.resolve({
     statusCode: 200,
-    body: `Triggered with ${bucketName}`,
+    body: `File contents ${fileContent}`,
   });
 };
