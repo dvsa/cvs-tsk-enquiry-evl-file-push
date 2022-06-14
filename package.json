@@ -33,7 +33,11 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@types/md5": "^2.3.2",
+    "@types/tar": "^6.1.1",
     "aws-sdk": "^2.1153.0",
+    "md5": "^2.3.0",
+    "tar": "^6.1.11",
     "winston": "^3.7.2"
   },
   "devDependencies": {
