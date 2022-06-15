@@ -10,7 +10,9 @@ export const filePush = async (filename: string) => {
   
   const sftp = new Client();
 
-  const remoteFileLocation = '/path/to/save/' + filename;
+  const remoteFolderLocation = '/path/to/save';
+
+  const remoteFileLocation = remoteFolderLocation + filename;
 
   await sftp.connect(config).then(() => {
     return sftp.fastPut(filename, remoteFileLocation);
