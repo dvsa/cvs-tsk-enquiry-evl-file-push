@@ -2,8 +2,9 @@ import md5 from 'md5';
 import tar from 'tar';
 import * as fs from 'fs';
 import * as zlib from 'zlib';
+import logger from '../util/logger';
 
-export const configureFile = async (filename: string) => {
+export const configureFile = async (bufferInput: Buffer) => {
   const recordInfoHeader = 'HEADER LINE: ';
   const description = 'EVL GVT TRANSFER FILE ';
   const options: Intl.DateTimeFormatOptions = {
@@ -30,7 +31,7 @@ export const configureFile = async (filename: string) => {
   const archiveName = archiveNamePrefix + formattedDate + '.tar.gz';
 
   try {
-    const data = fs.readFileSync(filename).toString().split('\n');
+    const data = bufferInput.toString().split('\n');
 
     const numberOfRecords = data.length.toString();
     const headerLine =
@@ -40,18 +41,24 @@ export const configureFile = async (filename: string) => {
 
     data.splice(0, 0, headerLine);
     data.splice(data.length, 0, trailerLine);
+    logger.debug('Spliced data into the csv file');
 
     const zipData = zlib.gzipSync(data.join('\n'));
     fs.writeFileSync(zipCsvFilename, zipData);
+    logger.debug('Written zipped csv file');
 
     const md5sum = md5(zipData);
     fs.writeFileSync(textFilename, md5sum);
+    logger.debug('Written txt checksum file');
 
     await tar.c({ gzip: true, file: archiveName }, [
       textFilename,
       zipCsvFilename,
     ]);
+    logger.debug('Written tar file');
+    return archiveName;
   } catch (err) {
-    throw err;
+    logger.debug(err);
+    logger.debug('Failed in file converting');
   }
 };
