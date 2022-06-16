@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import type { S3Event, S3EventRecord } from 'aws-lambda';
+import type { S3Event } from 'aws-lambda';
 import logger from '../util/logger';
 import { filePull } from '../filePull/fromS3';
 import { configureFile } from '../fileConvert/fileConvert';
@@ -24,6 +24,6 @@ export const handler = async (
   logger.info('Uploaded file to SFTP');
   
   return Promise.resolve({
-    statusCode: 200,
+    statusCode: 204,
   });
 };
