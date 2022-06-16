@@ -1,13 +1,12 @@
 import Client from 'ssh2-sftp-client';
 import logger from '../util/logger';
 
-
 export const filePush = async (filename: string) => {
 
   const config = {
     host: process.env.SFTP_Address,
     username: process.env.SFTP_User,
-    password: process.env.SFTP_Password,
+    privateKey: process.env.SFTP_PrivateKey,
     retries: 3, 
   };
   
