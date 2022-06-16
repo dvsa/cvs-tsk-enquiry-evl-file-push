@@ -25,7 +25,7 @@ describe('test the push to SFTP server', () => {
     expect(await filePush('fakefile.txt')).toBe(void 0);
   });
 
-  test('should allow me to push to sftp', async () => {
+  test('should error and not allow me to push to sftp', async () => {
     mockConnect.mockReturnValue(Promise.reject(new Error('no connection')));
     await expect(filePush('fakefile.txt')).rejects.toThrow(new Error('no connection'));
   });
