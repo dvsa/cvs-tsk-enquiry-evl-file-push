@@ -33,6 +33,10 @@ export const configureFile = async (bufferInput: Buffer) => {
   try {
     const data = bufferInput.toString().split('\n');
 
+    if (data.length == 1 && data[0] === '') {
+      throw new Error('No data provided');
+    }
+
     const numberOfRecords = data.length.toString();
     const headerLine =
       recordInfoHeader + description + dateFileCreation + ', , ';
@@ -60,5 +64,6 @@ export const configureFile = async (bufferInput: Buffer) => {
   } catch (err) {
     logger.debug(err);
     logger.debug('Failed in file converting');
+    throw err;
   }
 };
