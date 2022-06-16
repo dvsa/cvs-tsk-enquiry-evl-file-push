@@ -22,6 +22,7 @@ export const filePush = async (filename: string) => {
     logger.debug('Successfully uploaded to SFTP');
     return sftp.end();
   }).catch((err) => {
+    logger.debug('', err);
     throw err;
   });
 
