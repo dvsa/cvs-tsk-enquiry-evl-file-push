@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 import { configureFile } from '../../src/fileConvert/fileConvert';
 import * as fs from 'fs';
 import * as zlib from 'zlib';

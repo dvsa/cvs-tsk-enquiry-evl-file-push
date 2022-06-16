@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 import md5 from 'md5';
 import tar from 'tar';
 import * as fs from 'fs';
@@ -45,25 +46,25 @@ export const configureFile = async (bufferInput: Buffer) => {
 
     data.splice(0, 0, headerLine);
     data.splice(data.length, 0, trailerLine);
-    logger.debug('Spliced data into the csv file');
+    logger.info('Spliced data into the csv file');
 
     const zipData = zlib.gzipSync(data.join('\n'));
     fs.writeFileSync(zipCsvFilename, zipData);
-    logger.debug('Written zipped csv file');
+    logger.info('Written zipped csv file');
 
     const md5sum = md5(zipData);
     fs.writeFileSync(textFilename, md5sum);
-    logger.debug('Written txt checksum file');
+    logger.info('Written txt checksum file');
 
     await tar.c({ gzip: true, file: archiveName }, [
       textFilename,
       zipCsvFilename,
     ]);
-    logger.debug('Written tar file');
+    logger.info('Written tar file');
     return archiveName;
   } catch (err) {
-    logger.debug(err);
-    logger.debug('Failed in file converting');
+    logger.error(err);
+    logger.error('Failed in file converting');
     throw err;
   }
 };

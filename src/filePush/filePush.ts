@@ -19,10 +19,10 @@ export const filePush = async (filename: string) => {
   await sftp.connect(config).then(() => {
     return sftp.fastPut(filename, remoteFileLocation);
   }).then(() => {
-    logger.debug('Successfully uploaded to SFTP');
+    logger.info('Successfully uploaded to SFTP');
     return sftp.end();
   }).catch((err) => {
-    logger.debug('', err);
+    logger.error('', err);
     throw err;
   });
 

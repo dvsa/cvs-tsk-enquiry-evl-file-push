@@ -17,14 +17,13 @@ export const handler = async (
 ): Promise<Record<string, unknown>> => {
   const record = event.Records[0];
   const evlFile = await filePull(record);
-  logger.debug(`File contents ${evlFile.toString()}`);
+  logger.info(`File contents ${evlFile.toString()}`);
   const filename = await configureFile(evlFile);
-  logger.debug('Wrote out file');
+  logger.info('Wrote out file');
   await filePush(filename);
-  logger.debug('Uploaded file to SFTP');
+  logger.info('Uploaded file to SFTP');
   
   return Promise.resolve({
     statusCode: 200,
-    body: `File contents ${evlFile.toString()}`,
   });
 };
