@@ -63,7 +63,7 @@ describe('test the file config', () => {
 
 
 describe('test the file config failure condition', () => {
-  test('no file found throws an error', async () => {
+  test('no data provided throws an error', async () => {
     await expect(configureFile(Buffer.from(''))).rejects.toThrow('No data provided');
   });
 });
