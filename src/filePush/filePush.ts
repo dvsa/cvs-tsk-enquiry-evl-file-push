@@ -13,17 +13,18 @@ export const filePush = async (filename: string) => {
   
   const sftp = new Client();
 
-  const remoteFolderLocation = process.env.SFTP_Path;
-  const remoteFileLocation = remoteFolderLocation + filename;
+  const remoteFileLocation = process.env.SFTP_Path + filename;
   
-  await sftp.connect(config).then(() => {
-    return sftp.fastPut(filename, remoteFileLocation);
-  }).then(() => {
-    logger.info('Successfully uploaded to SFTP');
-    return sftp.end();
-  }).catch((err) => {
-    logger.error('', err);
-    throw err;
-  });
+  await sftp
+    .connect(config)
+    .then(() => sftp.fastPut(filename, remoteFileLocation))
+    .then(() => {
+      logger.info('Successfully uploaded to SFTP');
+      return sftp.end();
+    })
+    .catch((err) => {
+      logger.error('', err);
+      throw err;
+    });
 
 };
