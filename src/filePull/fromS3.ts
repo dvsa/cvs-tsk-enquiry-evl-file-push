@@ -4,7 +4,7 @@ import { S3 } from 'aws-sdk';
 import { S3EventRecord } from 'aws-lambda';
 
 const s3 = new S3(
-  process.env.IS_LOCAL && {
+  (process.env.IS_LOCAL || process.env.IS_OFFLINE) && {
     s3ForcePathStyle: true,
     accessKeyId: 'S3RVER',
     secretAccessKey: 'S3RVER',
