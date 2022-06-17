@@ -21,9 +21,7 @@ export const createConfig = () => {
     config.privateKey = process.env.SFTP_PrivateKey;
   } else if (process.env.SFTP_Password && process.env.SFTP_Password != '') {
     config.password = process.env.SFTP_Password;
-  }
-
-  if (!config.password && !config.privateKey) {
+  } else {
     logger.error('No password or private key found, please check the env variables');
     throw new Error('No password or private key found, please check the env variables');
   }
