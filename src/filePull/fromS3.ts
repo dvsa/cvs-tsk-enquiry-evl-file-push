@@ -9,7 +9,8 @@ const s3 = new S3(
     accessKeyId: 'S3RVER',
     secretAccessKey: 'S3RVER',
     endpoint: 'http://localhost:4569',
-  });
+  },
+);
 
 export const filePull = async (record: S3EventRecord) => {
   const bucket = record.s3.bucket.name;
