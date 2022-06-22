@@ -15,6 +15,10 @@ jest.mock('ssh2-sftp-client', () => {
   };
 });
 
+jest.mock('../../src/util/getSecret', () => ({
+  getSecret: jest.fn(() => Promise.resolve('Value From Secrets Manager')),
+}));
+
 import { filePush, createConfig, Config } from '../../src/filePush/filePush';
 
 describe('test the push to SFTP server', () => {
@@ -41,51 +45,51 @@ describe('test the create config function', () => {
     delete process.env.SFTP_Key;
   });
 
-  test('the config is correct with just a password supplied', () => {
+  test('the config is correct with just a password supplied', async () => {
     process.env.SFTP_Password = 'testPassword';
-    const config = createConfig();
+    const config = await createConfig();
     const expectedConfig: Config = {
       host: process.env.SFTP_Host,
       username: process.env.SFTP_User,
       retries: 3,
-      password: 'testPassword',
+      password: 'Value From Secrets Manager',
     };
 
     expect(config).toStrictEqual(expectedConfig);
   });
 
-  test('the config is correct with just a privateKey supplied', () => {
+  test('the config is correct with just a privateKey supplied', async () => {
     process.env.SFTP_Key = 'privateKey';
-    const config = createConfig();
+    const config = await createConfig();
     const expectedConfig: Config = {
       host: process.env.SFTP_Host,
       username: process.env.SFTP_User,
       retries: 3,
-      privateKey: 'privateKey',
+      privateKey: 'Value From Secrets Manager',
     };
 
     expect(config).toStrictEqual(expectedConfig);
   });
 
-  test('the config is correct with both a privateKey and password supplied', () => {
+  test('the config is correct with both a privateKey and password supplied', async () => {
     process.env.SFTP_Password = 'testPassword';
     process.env.SFTP_Key = 'privateKey';
-    const config = createConfig();
+    const config = await createConfig();
     const expectedConfig: Config = {
       host: process.env.SFTP_Host,
       username: process.env.SFTP_User,
       retries: 3,
-      privateKey: 'privateKey',
+      privateKey: 'Value From Secrets Manager',
     };
 
     expect(config).toStrictEqual(expectedConfig);
   });
 
-  test('the config throws an error if no password or key is supplied', () => {
+  test('the config throws an error if no password or key is supplied', async () => {
     expect.assertions(1);
 
     try {
-      createConfig();
+      await createConfig();
     } catch (error) {
       expect(error).toHaveProperty(
         'message',
