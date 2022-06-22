@@ -5,6 +5,7 @@ import { configureFile } from '../fileConvert/fileConvert';
 import { filePull } from '../filePull/fromS3';
 import { filePush } from '../filePush/filePush';
 import { randomUUID } from 'crypto';
+import logger from '../util/logger';
 
 const handleEvent = async (record: S3EventRecord) => {
   const workingDir = `/tmp/${randomUUID()}/`;
@@ -36,7 +37,8 @@ export const handler = async (
     try {
       await handleEvent(record);
     } catch  (err) {
-      console.error(err);
+      logger.error(err);
+      logger.error(`The file ${record.s3.object.key} failed somewhere, 500 was returned.`);
       return Promise.resolve({
         statusCode: 500,
       });
