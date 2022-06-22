@@ -4,7 +4,9 @@ jest.mock('aws-sdk', () => {
   const mSecretsManagerInstance = {
     getSecretValue: () => {
       return {
-        promise: jest.fn().mockReturnValue({ SecretString: 'Secret From Secrets Manager' }),
+        promise: jest
+          .fn()
+          .mockReturnValue({ SecretString: 'Secret From Secrets Manager' }),
       };
     },
   };

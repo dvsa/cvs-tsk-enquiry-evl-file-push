@@ -88,13 +88,10 @@ describe('test the create config function', () => {
   test('the config throws an error if no password or key is supplied', async () => {
     expect.assertions(1);
 
-    try {
-      await createConfig();
-    } catch (error) {
-      expect(error).toHaveProperty(
-        'message',
+    await expect(createConfig()).rejects.toThrow(
+      new Error(
         'No password or private key found, please check the env variables',
-      );
-    }
+      ),
+    );
   });
 });
