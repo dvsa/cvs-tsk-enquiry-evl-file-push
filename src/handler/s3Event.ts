@@ -14,8 +14,6 @@ const handleEvent = async (record: S3EventRecord) => {
     const evlFileData = await filePull(record);
     const filepath = await configureFile(workingDir, evlFileData.data, evlFileData.filename);
     await filePush(filepath);
-  } catch (err) {
-    throw err;
   } finally {
     fs.rmSync(workingDir, { recursive: true, force: true });
   }
