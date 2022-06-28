@@ -1,6 +1,6 @@
 # EVL Data File Push
 
-A typescript lambda function that takes an S3 bucket event, processes the file to meet business requirements, and pushes the file to a SFTP server.
+A typescript lambda function that takes an S3 bucket event, processes the file to meet business requirements, and pushes the file to an SFTP server.
 
 ## Requirements
 
@@ -33,18 +33,18 @@ You can keep invoking the lambda until you shutdown the serverless offline proce
 
 Run `npm run debug`. This will instruct serverless offline to 'invoke' the lambda with a payload and then stop. The actual process involves a number of steps.
 
-- Start serverless-s3-local.
-- Create an instance of the lambda.
-- Invoke the lambda with a payload.
-- Stop serverless-s3-local.
+- Start serverless-s3-local
+- Create an instance of the lambda
+- Invoke the lambda with a payload
+- Stop serverless-s3-local
 
 ## Debug Lambdas Locally
 
 There are three debug configurations setup for vscode.
 
-- Debug Jest Tests: runs `jest` with the debugger attached.
-- Debug Start: runs `npm run start` with the debugger attached.
-- Debug Invoke: runs `npm run debug` with the debugger attached.
+- Debug Jest Tests: runs `jest` with the debugger attached
+- Debug Start: runs `npm run start` with the debugger attached
+- Debug Invoke: runs `npm run debug` with the debugger attached
 
 There is an issue with the last two configurations. The debugger does not automatically close after the debugging session. It needs to be manually stopped before you can start a new session.
 
@@ -53,9 +53,9 @@ There is an issue with the last two configurations. The debugger does not automa
 SonarQube code coverage analysis has been added as part of the git prepush hook. This is to better align with what happens in the pipeline.  
 To get it working locally, follow these steps:
 
-- Ensure SonarQube is installed. Running in a [container](https://hub.docker.com/_/sonarqube) is a great option.
-- Within SonarQube, Disable Force user authentication via Administration -> Configuration -> Security.
-- Install jq with `sudo apt install jq` or `brew install jq`.
+- Ensure SonarQube is installed. Running in a [container](https://hub.docker.com/_/sonarqube) is a great option
+- Within SonarQube, Disable Force user authentication via Administration -> Configuration -> Security
+- Install jq with `sudo apt install jq` or `brew install jq`
 
 When running `git push`, it will run tests followed by the SonarQube scan. If the scan fails or the unit test coverage is below 80%, the push is cancelled.
 
