@@ -17,9 +17,7 @@ const handleEvent = async (record: S3EventRecord) => {
       evlFileData.data,
       evlFileData.filename,
     );
-    if (process.env.SEND_SFTP === 'true') {
-      await filePush(filepath);
-    }
+    await filePush(filepath);
   } finally {
     fs.rmSync(workingDir, { recursive: true, force: true });
   }
@@ -36,7 +34,11 @@ export const handler = async (event: S3Event): Promise<string> => {
 
   for (const record of event.Records) {
     try {
-      await handleEvent(record);
+      if (process.env.SEND_SFTP === 'true') {
+        await handleEvent(record);
+      } else {
+        logger.info('Did not send to SFTP server, check the env vars');
+      }
     } catch (err) {
       logger.error('', err);
       return Promise.reject(
