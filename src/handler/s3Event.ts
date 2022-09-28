@@ -17,7 +17,7 @@ const handleEvent = async (record: S3EventRecord) => {
       evlFileData.data,
       evlFileData.filename,
     );
-    if (process.env.DISABLE_SFTP) {
+    if (process.env.SEND_SFTP === 'true') {
       await filePush(filepath);
     }
   } finally {
