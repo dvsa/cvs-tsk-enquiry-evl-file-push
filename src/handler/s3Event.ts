@@ -17,7 +17,9 @@ const handleEvent = async (record: S3EventRecord) => {
       evlFileData.data,
       evlFileData.filename,
     );
-    await filePush(filepath);
+    if (process.env.SEND_SFTP === 'true') {
+      await filePush(filepath);
+    }
   } finally {
     fs.rmSync(workingDir, { recursive: true, force: true });
   }
