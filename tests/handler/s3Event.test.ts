@@ -35,8 +35,8 @@ describe('Test S3 Event Lambda Function', () => {
   test('should return 204', async () => {
     jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
-        host: process.env.SFTP_Host,
-        username: process.env.SFTP_User,
+        host: 'testHost',
+        username: 'testUser',
         retries: 3,
         password: 'testPassword',
       };
@@ -60,8 +60,8 @@ describe('Test S3 Event Lambda Function', () => {
   test('should return 204 with multiple s3 events', async () => {
     jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
-        host: process.env.SFTP_Host,
-        username: process.env.SFTP_User,
+        host: 'testHost',
+        username: 'testUser',
         retries: 3,
         password: 'testPassword',
       };
@@ -83,11 +83,11 @@ describe('Test S3 Event Lambda Function', () => {
   });
 
   test('should return error message with multiple s3 events if one breaks', async () => {
-    process.env.SEND_SFTP = 'true';
+    process.env.EVL_SFTP_SEND = 'true';
     jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
-        host: process.env.SFTP_Host,
-        username: process.env.SFTP_User,
+        host: 'testHost',
+        username: 'testUser',
         retries: 3,
         password: 'testPassword',
       };

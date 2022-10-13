@@ -22,7 +22,13 @@ export const createConfig = async (eventType: string) => {
     logger.error('', 'Unable to determine event type, please try again');
   }
 
-  return JSON.parse(secretString) as Config;
+  try {
+    return JSON.parse(secretString) as Config;
+  } catch (e) {
+    logger.error('', e);
+    throw e;
+  }
+  
 };
 
 export const filePush = async (filepath: string, eventType: string) => {
