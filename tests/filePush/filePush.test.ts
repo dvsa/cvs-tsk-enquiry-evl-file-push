@@ -16,7 +16,11 @@ jest.mock('ssh2-sftp-client', () => {
 });
 
 jest.mock('../../src/util/getSecret', () => ({
-  getSecret: jest.fn(() => Promise.resolve('{ "host" : "test", "username" : "user", "retries" : 3, "password": "psswrd" }')),
+  getSecret: jest.fn(() =>
+    Promise.resolve(
+      '{ "host" : "test", "username" : "user", "retries" : 3, "password": "psswrd" }',
+    ),
+  ),
 }));
 
 import { filePush, createConfig, Config } from '../../src/filePush/filePush';
@@ -45,7 +49,6 @@ describe('test the push to SFTP server', () => {
 });
 
 describe('test the create config function', () => {
-
   test('the config is correct', async () => {
     const config = await createConfig('evl');
     const expectedConfig: Config = {
@@ -62,9 +65,7 @@ describe('test the create config function', () => {
     expect.assertions(1);
 
     await expect(createConfig('txt')).rejects.toThrow(
-      new Error(
-        'Unexpected token u in JSON at position 0',
-      ),
+      new Error('Unexpected token u in JSON at position 0'),
     );
   });
 });

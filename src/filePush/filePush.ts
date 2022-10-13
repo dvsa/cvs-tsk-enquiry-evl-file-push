@@ -28,7 +28,6 @@ export const createConfig = async (eventType: string) => {
     logger.error('', e);
     throw e;
   }
-  
 };
 
 export const filePush = async (filepath: string, eventType: string) => {
