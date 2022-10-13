@@ -51,12 +51,14 @@ export const handler = async (event: S3Event): Promise<string> => {
 
       if (fileName.startsWith('EVL_') && process.env.EVL_SFTP_SEND === 'true') {
         await handleEvlEvent(record);
-      } else if (fileName.startsWith('VOSA') && process.env.TFL_SFTP_SEND === 'true') {
+      } else if (
+        fileName.startsWith('VOSA') &&
+        process.env.TFL_SFTP_SEND === 'true'
+      ) {
         await handleTflEvent(record);
       } else {
         logger.info('Did not send to SFTP server, check the env vars');
       }
-
     } catch (err) {
       logger.error('', err);
       return Promise.reject(

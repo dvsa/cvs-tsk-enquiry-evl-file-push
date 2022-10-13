@@ -11,7 +11,6 @@ export interface Config {
   privateKey?: string;
 }
 
-
 export const createConfig = async (eventType: string) => {
   let secretString: string;
 
@@ -20,10 +19,7 @@ export const createConfig = async (eventType: string) => {
   } else if (eventType === 'tfl') {
     secretString = await getSecret(process.env.TFL_SFTP_CONFIG);
   } else {
-    logger.error(
-      '',
-      'Unable to determine event type, please try again',
-    );
+    logger.error('', 'Unable to determine event type, please try again');
   }
 
   return JSON.parse(secretString) as Config;
@@ -32,9 +28,9 @@ export const createConfig = async (eventType: string) => {
 export const filePush = async (filepath: string, eventType: string) => {
   const config = await createConfig(eventType);
   const sftp = new Client();
-  const sftpPath = eventType === 'evl' ? process.env.EVL_SFTP_PATH : process.env.TFL_SFTP_PATH;
-  const remoteFileLocation =
-    (sftpPath ?? '') + path.basename(filepath);
+  const sftpPath =
+    eventType === 'evl' ? process.env.EVL_SFTP_PATH : process.env.TFL_SFTP_PATH;
+  const remoteFileLocation = (sftpPath ?? '') + path.basename(filepath);
 
   try {
     await sftp.connect(config);
