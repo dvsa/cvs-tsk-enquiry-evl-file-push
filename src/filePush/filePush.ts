@@ -33,16 +33,21 @@ export const createConfig = async (eventType: string) => {
 export const filePush = async (filepath: string, eventType: string) => {
   const config = await createConfig(eventType);
   logger.info('Created config from secrets');
-  logger.info(config);
   logger.info(config.host);
+  logger.info(config.username);
+  logger.info(config.retries);
+  logger.info(config.privateKey != '');
+  logger.info(config.privateKey != null);
+  logger.info(config.privateKey != undefined);
   const sftp = new Client();
   const sftpPath =
     eventType === 'evl' ? process.env.EVL_SFTP_PATH : process.env.TFL_SFTP_PATH;
   const remoteFileLocation = (sftpPath ?? '') + path.basename(filepath);
 
   try {
+    logger.info('Attempt connection');
     await sftp.connect(config);
-    logger.info('Spliced data into the csv file');
+    logger.info('Connected to server');
     await sftp.fastPut(filepath, remoteFileLocation);
     logger.info('Successfully uploaded to SFTP');
   } catch (err) {
