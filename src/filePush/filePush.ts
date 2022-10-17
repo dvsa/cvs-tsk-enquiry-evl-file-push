@@ -32,7 +32,9 @@ export const createConfig = async (eventType: string) => {
 
 export const filePush = async (filepath: string, eventType: string) => {
   const config = await createConfig(eventType);
-  logger.info('Created config from secrets', config);
+  logger.info('Created config from secrets');
+  logger.info(config);
+  logger.info(config.host);
   const sftp = new Client();
   const sftpPath =
     eventType === 'evl' ? process.env.EVL_SFTP_PATH : process.env.TFL_SFTP_PATH;
