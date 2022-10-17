@@ -10,7 +10,7 @@ import logger from '../util/logger';
 const handleEvlEvent = async (record: S3EventRecord) => {
   const workingDir = `/tmp/evl/${randomUUID()}/`;
   try {
-    fs.mkdirSync(workingDir);
+    fs.mkdirSync(workingDir, { recursive: true });
     const evlFileData = await filePull(record);
     const filepath = await configureTflFile(
       workingDir,
@@ -26,7 +26,7 @@ const handleEvlEvent = async (record: S3EventRecord) => {
 const handleTflEvent = async (record: S3EventRecord) => {
   const workingDir = `/tmp/tfl/${randomUUID()}/`;
   try {
-    fs.mkdirSync(workingDir);
+    fs.mkdirSync(workingDir, { recursive: true });
     const tflFileData = await filePull(record);
     const filepath = workingDir + tflFileData.filename;
     fs.writeFileSync(filepath, tflFileData.data);
