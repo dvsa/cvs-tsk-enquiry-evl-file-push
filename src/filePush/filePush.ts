@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import Client from 'ssh2-sftp-client';
 import logger from '../util/logger';
 import path from 'path';
