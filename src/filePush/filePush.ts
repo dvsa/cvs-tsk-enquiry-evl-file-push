@@ -36,9 +36,7 @@ export const filePush = async (filepath: string, eventType: string) => {
   logger.info(config.host);
   logger.info(config.username);
   logger.info(config.retries);
-  logger.info(config.privateKey != '');
-  logger.info(config.privateKey != null);
-  logger.info(config.privateKey != undefined);
+  logger.info(config.privateKey);
   const sftp = new Client();
   const sftpPath =
     eventType === 'evl' ? process.env.EVL_SFTP_PATH : process.env.TFL_SFTP_PATH;
