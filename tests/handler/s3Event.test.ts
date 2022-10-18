@@ -57,6 +57,33 @@ describe('Test S3 Event Lambda Function', () => {
     expect(res).toBe('All records processed successfully.');
   });
 
+  test('should return 204 for TFL', async () => {
+    jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
+      const config = {
+        host: 'testHost',
+        username: 'testUser',
+        retries: 3,
+        password: 'testPassword',
+      };
+      return Promise.resolve(config);
+    });
+    mockConnect.mockReturnValue(Promise.resolve(true));
+    mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
+    mockEnd.mockReturnValue(Promise.resolve(void 0));
+    const getObjectOutput: GetObjectOutput = {
+      ContentType: 'text/csv',
+      Body: Buffer.from('File content'),
+    };
+    mockS3.promise.mockResolvedValue(getObjectOutput);
+    const eventMock: S3Event = event as S3Event;
+    eventMock.Records[0].s3.object.key = 'VOSA_1235.csv';
+    process.env.TFL_SFTP_SEND = 'true';
+
+    const res: string = await handler(eventMock);
+
+    expect(res).toBe('All records processed successfully.');
+  });
+
   test('should return 204 with multiple s3 events', async () => {
     jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
