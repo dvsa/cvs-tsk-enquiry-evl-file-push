@@ -11,6 +11,8 @@ export interface Config {
   privateKey?: string;
 }
 
+type Feeds = 'evl' | 'tfl';
+
 export const createConfig = async (eventType: string) => {
   let secretString: string;
 
@@ -34,9 +36,12 @@ export const filePush = async (filepath: string, eventType: string) => {
   const config = await createConfig(eventType);
   logger.info('Created config from secrets');
   const sftp = new Client();
-  const sftpPath =
-    eventType === 'evl' ? process.env.EVL_SFTP_PATH : process.env.TFL_SFTP_PATH;
-  const remoteFileLocation = (sftpPath ?? '') + path.basename(filepath);
+  const sftpPath: { [key in Feeds]: string } = {
+    evl: process.env.EVL_SFTP_PATH,
+    tfl: process.env.TFL_SFTP_PATH,
+  };
+  const remoteFileLocation =
+    ((sftpPath[eventType] as string) ?? '') + path.basename(filepath);
 
   try {
     logger.info('Attempt connection');
