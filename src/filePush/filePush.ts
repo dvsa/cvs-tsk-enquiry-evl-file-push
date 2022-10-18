@@ -14,17 +14,17 @@ export interface Config {
 
 type Feeds = 'evl' | 'tfl';
 
-export const createConfig = async (eventType: string) => {
+export const createConfig = async (eventType: Feeds) => {
   let secretString: string;
 
-  const sftpConfigSecretName: { [key in Feeds]: string } = {
-    'evl': process.env.EVL_SFTP_CONFIG,
-    'tfl': process.env.TFL_SFTP_CONFIG,
+  const sftpConfigSecretName: { [key in Feeds]: string | undefined } = {
+    evl: process.env.EVL_SFTP_CONFIG,
+    tfl: process.env.TFL_SFTP_CONFIG,
   };
 
   if (sftpConfigSecretName[eventType]) {
-    secretString = await getSecret(sftpConfigSecretName[eventType] as string);
-  }  else {
+    secretString = await getSecret(sftpConfigSecretName[eventType]);
+  } else {
     logger.error('Unable to determine event type, please try again');
   }
 
@@ -37,16 +37,16 @@ export const createConfig = async (eventType: string) => {
   }
 };
 
-export const filePush = async (filepath: string, eventType: string) => {
+export const filePush = async (filepath: string, eventType: Feeds) => {
   const config = await createConfig(eventType);
   logger.info('Created config from secrets');
   const sftp = new Client();
-  const sftpPath: { [key in Feeds]: string } = {
+  const sftpPath: { [key in Feeds]: string | undefined } = {
     evl: process.env.EVL_SFTP_PATH,
     tfl: process.env.TFL_SFTP_PATH,
   };
   const remoteFileLocation =
-    ((sftpPath[eventType] as string) ?? '') + path.basename(filepath);
+    (sftpPath[eventType] ?? '') + path.basename(filepath);
 
   try {
     logger.info('Attempt connection');
