@@ -17,17 +17,21 @@ type Feeds = 'evl' | 'tfl';
 export const createConfig = async (eventType: string) => {
   let secretString: string;
 
-  if (eventType === 'evl') {
-    secretString = await getSecret(process.env.EVL_SFTP_CONFIG);
-  } else if (eventType === 'tfl') {
-    secretString = await getSecret(process.env.TFL_SFTP_CONFIG);
-  } else {
-    logger.error('', 'Unable to determine event type, please try again');
+  const sftpConfigSecretName: { [key in Feeds]: string } = {
+    'evl': process.env.EVL_SFTP_CONFIG,
+    'tfl': process.env.TFL_SFTP_CONFIG,
+  };
+
+  if (sftpConfigSecretName[eventType]) {
+    secretString = await getSecret(sftpConfigSecretName[eventType] as string);
+  }  else {
+    logger.error('Unable to determine event type, please try again');
   }
 
   try {
     return JSON.parse(secretString) as Config;
   } catch (e) {
+    logger.error('Error parsing secret, see callstack below');
     logger.error('', e);
     throw e;
   }

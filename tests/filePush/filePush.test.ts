@@ -26,6 +26,9 @@ jest.mock('../../src/util/getSecret', () => ({
 import { filePush, createConfig, Config } from '../../src/filePush/filePush';
 
 describe('test the push to SFTP server', () => {
+  process.env.EVL_SFTP_CONFIG = 'mockString';
+  process.env.TFL_SFTP_CONFIG = 'mockString';
+
   test('should allow me to push to sftp', async () => {
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
