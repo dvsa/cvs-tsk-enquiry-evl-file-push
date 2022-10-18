@@ -11,40 +11,41 @@ export interface Config {
   privateKey?: string;
 }
 
-export const createConfig = async () => {
-  const config: Config = {
-    host: process.env.SFTP_Address,
-    username: process.env.SFTP_User,
-    retries: 3,
-  };
+export const createConfig = async (eventType: string) => {
+  let secretString: string;
 
-  if (process.env.SFTP_Key && process.env.SFTP_Key != '') {
-    const sftpKey = await getSecret(process.env.SFTP_Key);
-    config.privateKey = sftpKey;
-  } else if (process.env.SFTP_Password && process.env.SFTP_Password != '') {
-    const sftpPassword = await getSecret(process.env.SFTP_Password);
-    config.password = sftpPassword;
+  if (eventType === 'evl') {
+    secretString = await getSecret(process.env.EVL_SFTP_CONFIG);
+  } else if (eventType === 'tfl') {
+    secretString = await getSecret(process.env.TFL_SFTP_CONFIG);
   } else {
-    logger.error(
-      '',
-      'No password or private key found, please check the env variables',
-    );
-    throw new Error(
-      'No password or private key found, please check the env variables',
-    );
+    logger.error('', 'Unable to determine event type, please try again');
   }
 
-  return config;
+  try {
+    return JSON.parse(secretString) as Config;
+  } catch (e) {
+    logger.error('', e);
+    throw e;
+  }
 };
 
-export const filePush = async (filepath: string) => {
-  const config = await createConfig();
+export const filePush = async (filepath: string, eventType: string) => {
+  const config = await createConfig(eventType);
+  logger.info('Created config from secrets');
+  logger.info(config.host);
+  logger.info(config.username);
+  logger.info(config.retries);
+  logger.info(config.privateKey);
   const sftp = new Client();
-  const remoteFileLocation =
-    (process.env.SFTP_Path ?? '') + path.basename(filepath);
+  const sftpPath =
+    eventType === 'evl' ? process.env.EVL_SFTP_PATH : process.env.TFL_SFTP_PATH;
+  const remoteFileLocation = (sftpPath ?? '') + path.basename(filepath);
 
   try {
+    logger.info('Attempt connection');
     await sftp.connect(config);
+    logger.info('Connected to server');
     await sftp.fastPut(filepath, remoteFileLocation);
     logger.info('Successfully uploaded to SFTP');
   } catch (err) {
