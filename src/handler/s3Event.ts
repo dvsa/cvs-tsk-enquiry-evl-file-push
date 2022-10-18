@@ -1,7 +1,7 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 import * as fs from 'fs';
 import type { S3Event, S3EventRecord } from 'aws-lambda';
-import { configureTflFile } from '../fileConvert/fileConvert';
+import { configureEvlFile } from '../fileConvert/fileConvert';
 import { filePull } from '../filePull/fromS3';
 import { filePush } from '../filePush/filePush';
 import { randomUUID } from 'crypto';
@@ -12,7 +12,7 @@ const handleEvlEvent = async (record: S3EventRecord) => {
   try {
     fs.mkdirSync(workingDir, { recursive: true });
     const evlFileData = await filePull(record);
-    const filepath = await configureTflFile(
+    const filepath = await configureEvlFile(
       workingDir,
       evlFileData.data,
       evlFileData.filename,

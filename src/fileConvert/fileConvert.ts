@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as zlib from 'zlib';
 import logger from '../util/logger';
 
-export const configureTflFile = async (
+export const configureEvlFile = async (
   workingDir: string,
   bufferInput: Buffer,
   filename: string,
