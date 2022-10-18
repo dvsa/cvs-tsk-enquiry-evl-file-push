@@ -66,8 +66,8 @@ describe('test the create config function', () => {
 
   test('the config throws an error on wrong event type', async () => {
     expect.assertions(1);
-
-    await expect(createConfig('txt')).rejects.toThrow(
+    delete process.env.EVL_SFTP_CONFIG;
+    await expect(createConfig('evl')).rejects.toThrow(
       new Error('Unexpected token u in JSON at position 0'),
     );
   });
