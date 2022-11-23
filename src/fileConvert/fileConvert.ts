@@ -50,7 +50,7 @@ export const configureEvlFile = async (
 
     const csvData = data.join('\n');
     fs.writeFileSync(workingDir + csvFilename, csvData);
-    logger.info('Written zipped csv file');
+    logger.info('Written csv file');
 
     const md5sum = md5(csvData);
     fs.writeFileSync(workingDir + textFilename, md5sum);
