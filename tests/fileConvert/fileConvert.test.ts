@@ -11,14 +11,14 @@ describe('test the file config', () => {
     .split('_')[2]
     .split('.')[0];
   const txtFilename = 'crc32_' + dateFromFilename + '.txt';
-  const zipCsvFilename = 'EVL_GVT_' + dateFromFilename + '.csv.gz';
+  const csvFilename = 'EVL_GVT_' + dateFromFilename + '.csv';
   const finalFilename = 'EVL_GVT_' + dateFromFilename + '.tar.gz';
 
   let buffer: Buffer;
 
   afterEach(() => {
     fs.unlinkSync(finalFilename);
-    fs.unlinkSync(zipCsvFilename);
+    fs.unlinkSync(csvFilename);
     fs.unlinkSync(txtFilename);
   });
 
@@ -35,7 +35,7 @@ describe('test the file config', () => {
   test('expect csv filename to be correct', async () => {
     await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
     const fileList = fs.readdirSync('./');
-    expect(fileList).toContain(zipCsvFilename);
+    expect(fileList).toContain(csvFilename);
   });
 
   test('expect txt filename to be correct', async () => {
@@ -46,8 +46,7 @@ describe('test the file config', () => {
 
   test('expect csv to include the header and footer', async () => {
     await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
-    const zipCsvFile = fs.readFileSync(zipCsvFilename);
-    const csvFile = zlib.gunzipSync(zipCsvFile);
+    const csvFile = fs.readFileSync(csvFilename);
     const csvData = csvFile.toString();
     expect(csvData).toContain('HEADER LINE: EVL GVT TRANSFER FILE');
     expect(csvData).toContain('TRAILER LINE: 2 RECORDS.');
@@ -55,7 +54,7 @@ describe('test the file config', () => {
 
   test('expect hash to match', async () => {
     await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
-    const csvFile = fs.readFileSync(zipCsvFilename);
+    const csvFile = fs.readFileSync(csvFilename);
     const textFile = fs.readFileSync(txtFilename);
     const hash = md5(csvFile);
     expect(textFile.toString()).toBe(hash);
