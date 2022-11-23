@@ -2,7 +2,6 @@
 import md5 from 'md5';
 import tar from 'tar';
 import * as fs from 'fs';
-import * as zlib from 'zlib';
 import logger from '../util/logger';
 
 export const configureEvlFile = async (
@@ -27,7 +26,7 @@ export const configureEvlFile = async (
   const textFilenamePrefix = 'crc32_';
   const archiveNamePrefix = 'EVL_GVT_';
   const dateFromFilename = filename.split('_')[2].split('.')[0];
-  const zipCsvFilename = archiveNamePrefix + dateFromFilename + '.csv.gz';
+  const csvFilename = archiveNamePrefix + dateFromFilename + '.csv';
   const textFilename = textFilenamePrefix + dateFromFilename + '.txt';
   const archiveName =
     workingDir + archiveNamePrefix + dateFromFilename + '.tar.gz';
@@ -49,17 +48,17 @@ export const configureEvlFile = async (
     data.splice(data.length, 0, trailerLine);
     logger.info('Spliced data into the csv file');
 
-    const zipData = zlib.gzipSync(data.join('\n'));
-    fs.writeFileSync(workingDir + zipCsvFilename, zipData);
-    logger.info('Written zipped csv file');
+    const csvData = data.join('\n');
+    fs.writeFileSync(workingDir + csvFilename, csvData);
+    logger.info('Written csv file');
 
-    const md5sum = md5(zipData);
+    const md5sum = md5(csvData);
     fs.writeFileSync(workingDir + textFilename, md5sum);
     logger.info('Written txt checksum file');
 
     await tar.c({ gzip: true, file: archiveName, cwd: workingDir }, [
       textFilename,
-      zipCsvFilename,
+      csvFilename,
     ]);
     logger.info('Written tar file');
     return archiveName;
