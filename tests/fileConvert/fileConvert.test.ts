@@ -1,7 +1,6 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
 import { configureEvlFile } from '../../src/fileConvert/fileConvert';
 import * as fs from 'fs';
-import * as zlib from 'zlib';
 import md5 from 'md5';
 
 describe('test the file config', () => {
