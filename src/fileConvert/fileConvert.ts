@@ -53,7 +53,8 @@ export const configureEvlFile = async (
     logger.info('Written csv file');
 
     const md5sum = md5(csvData);
-    fs.writeFileSync(workingDir + textFilename, md5sum);
+    const md5string = 'MD5 (' + csvFilename + ') = ' + md5sum;
+    fs.writeFileSync(workingDir + textFilename, md5string);
     logger.info('Written txt checksum file');
 
     await tar.c({ gzip: true, file: archiveName, cwd: workingDir }, [
