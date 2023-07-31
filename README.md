@@ -4,8 +4,8 @@ A typescript lambda function that takes an S3 bucket event, processes the file t
 
 ## Requirements
 
-- node v14
-- npm v8
+- node v18
+- npm v9
 - aws cli v2
 
 ## Prerequisites

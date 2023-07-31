@@ -55,7 +55,7 @@ describe('test the file config', () => {
     await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
     const csvFile = fs.readFileSync(csvFilename);
     const textFile = fs.readFileSync(txtFilename);
-    const hash = 'MD5 (EVL_GVT_20220621.csv) = '  + md5(csvFile);
+    const hash = 'MD5 (EVL_GVT_20220621.csv) = ' + md5(csvFile);
     expect(textFile.toString()).toBe(hash);
   });
 });
