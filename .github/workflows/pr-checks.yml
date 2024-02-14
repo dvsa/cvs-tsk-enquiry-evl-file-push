@@ -5,7 +5,7 @@ name: PR-checks
 
 on:
   push:
-    branches: ['develop']
+    branches: ['develop', 'feature/CB2-10773']
   pull_request:
     branches: ['develop']
 
