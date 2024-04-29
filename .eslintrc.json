@@ -13,6 +13,11 @@
       {
         "devDependencies": true
       }
-    ]
+    ],
+    "@typescript-eslint/no-unsafe-assignment": 0,
+    "no-void": 0,
+    "no-restricted-syntax": 0,
+    "prefer-promise-reject-errors": 0,
+    "no-await-in-loop": 0
   }
 }

@@ -1,38 +1,44 @@
-import logger from '../util/logger';
-import { GetObjectOutput } from 'aws-sdk/clients/s3';
-import { S3 } from 'aws-sdk';
+import {
+  GetObjectCommand,
+  GetObjectCommandOutput,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { S3EventRecord } from 'aws-lambda';
+import logger from '../util/logger';
 
-const s3 = new S3(
-  (process.env.IS_LOCAL || process.env.IS_OFFLINE) && {
-    s3ForcePathStyle: true,
+const s3Client = new S3Client({
+  credentials: {
     accessKeyId: 'S3RVER',
     secretAccessKey: 'S3RVER',
-    endpoint: 'http://localhost:4569',
   },
-);
+  endpoint:
+    process.env.IS_LOCAL || process.env.IS_OFFLINE
+      ? 'http://localhost:4569'
+      : undefined,
+});
 
 export const filePull = async (record: S3EventRecord) => {
   const bucket = record.s3.bucket.name;
   const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '));
-  const params = {
+  const command = new GetObjectCommand({
     Bucket: bucket,
     Key: key,
-  };
-  try {
-    const s3Object: GetObjectOutput = await s3.getObject(params).promise();
+  });
 
-    logger.debug(`s3Object: ${JSON.stringify(s3Object, null, 2)}`);
-    if (!Buffer.isBuffer(s3Object.Body)) {
+  try {
+    const response: GetObjectCommandOutput = await s3Client.send(command);
+
+    logger.debug(`s3Object: ${JSON.stringify(response, null, 2)}`);
+    if (!Buffer.isBuffer(response.Body)) {
       throw new Error(
-        `Body of object with ETag ${s3Object.ETag} is not a Buffer.`,
+        `Body of object with ETag ${response.ETag} is not a Buffer.`,
       );
     }
 
     logger.info(`${key} pulled successfully.`);
 
     return {
-      data: s3Object.Body,
+      data: response.Body,
       filename: key,
     };
   } catch (err) {

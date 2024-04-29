@@ -1,7 +1,7 @@
 /* eslint-disable security/detect-object-injection */
 import Client from 'ssh2-sftp-client';
-import logger from '../util/logger';
 import path from 'path';
+import logger from '../util/logger';
 import { getSecret } from '../util/getSecret';
 
 export interface Config {
@@ -45,8 +45,7 @@ export const filePush = async (filepath: string, eventType: Feeds) => {
     evl: process.env.EVL_SFTP_PATH,
     tfl: process.env.TFL_SFTP_PATH,
   };
-  const remoteFileLocation =
-    (sftpPath[eventType] ?? '') + path.basename(filepath);
+  const remoteFileLocation = (sftpPath[eventType] ?? '') + path.basename(filepath);
 
   try {
     logger.info('Attempt connection');

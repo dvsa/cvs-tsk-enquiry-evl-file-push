@@ -1,29 +1,23 @@
+import { filePush, createConfig, Config } from '../../src/filePush/filePush';
+
 const mockConnect = jest.fn();
 const mockFastPut = jest.fn();
 const mockEnd = jest.fn();
 
-jest.mock('ssh2-sftp-client', () => {
-  return {
-    __esModule: true,
-    default: jest.fn().mockImplementation(() => {
-      return {
-        connect: mockConnect,
-        fastPut: mockFastPut,
-        end: mockEnd,
-      };
-    }),
-  };
-});
-
-jest.mock('../../src/util/getSecret', () => ({
-  getSecret: jest.fn(() =>
-    Promise.resolve(
-      '{ "host" : "test", "username" : "user", "retries" : 3, "password": "psswrd" }',
-    ),
-  ),
+jest.mock('ssh2-sftp-client', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    connect: mockConnect,
+    fastPut: mockFastPut,
+    end: mockEnd,
+  })),
 }));
 
-import { filePush, createConfig, Config } from '../../src/filePush/filePush';
+jest.mock('../../src/util/getSecret', () => ({
+  getSecret: jest.fn(() => Promise.resolve(
+    '{ "host" : "test", "username" : "user", "retries" : 3, "password": "psswrd" }',
+  )),
+}));
 
 describe('test the push to SFTP server', () => {
   process.env.EVL_SFTP_CONFIG = 'mockString';
