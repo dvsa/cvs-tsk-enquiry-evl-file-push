@@ -35,7 +35,7 @@ export const configureEvlFile = async (
   try {
     const data = bufferInput.toString().split('\n');
 
-    if (data.length === 1 && data[0] === '') {
+    if (data.length == 1 && data[0] === '') {
       throw new Error('No data provided');
     }
 

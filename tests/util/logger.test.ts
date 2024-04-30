@@ -4,7 +4,6 @@ process.env.LOG_LEVEL = 'debug';
 import { EOL } from 'os';
 import logger from '../../src/util/logger';
 
-
 describe('logger functions', () => {
   it('GIVEN a logger WHEN an info is logged THEN the console message is correct.', () => {
     // @ts-ignore

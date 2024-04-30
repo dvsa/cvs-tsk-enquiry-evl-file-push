@@ -43,11 +43,16 @@ const handleTflEvent = async (record: S3EventRecord) => {
  * @returns {Promise<string>}
  */
 export const handler = async (event: S3Event): Promise<string> => {
+  console.log(JSON.stringify(event));
   logger.debug(`event: ${JSON.stringify(event, null, 2)}`);
 
   for (const record of event.Records) {
     try {
       const fileName = record.s3.object.key;
+
+      console.log('fileName', fileName);
+      console.log('process.env.EVL_SFTP_SEND', process.env.EVL_SFTP_SEND);
+      console.log('process.env.TFL_SFTP_SEND', process.env.TFL_SFTP_SEND);
 
       if (fileName.startsWith('EVL_') && process.env.EVL_SFTP_SEND === 'true') {
         await handleEvlEvent(record);

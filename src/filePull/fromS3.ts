@@ -1,33 +1,26 @@
-import {
-  GetObjectCommand,
-  GetObjectCommandOutput,
-  S3Client,
-} from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, GetObjectCommandOutput } from '@aws-sdk/client-s3';
+import { fromIni } from '@aws-sdk/credential-provider-ini';
 import { S3EventRecord } from 'aws-lambda';
 import logger from '../util/logger';
 
 const s3Client = new S3Client({
-  credentials: {
-    accessKeyId: 'S3RVER',
-    secretAccessKey: 'S3RVER',
-  },
-  endpoint:
-    process.env.IS_LOCAL || process.env.IS_OFFLINE
-      ? 'http://localhost:4569'
-      : undefined,
+  credentials: (process.env.IS_LOCAL || process.env.IS_OFFLINE) ? fromIni({}) : undefined,
+  endpoint: (process.env.IS_LOCAL || process.env.IS_OFFLINE) ? 'http://localhost:4569' : undefined,
 });
 
 export const filePull = async (record: S3EventRecord) => {
   const bucket = record.s3.bucket.name;
   const key = decodeURIComponent(record.s3.object.key.replace(/\+/g, ' '));
-  const command = new GetObjectCommand({
+  const params = {
     Bucket: bucket,
     Key: key,
-  });
+  };
+
+  console.log('params:', params);
 
   try {
-    const response: GetObjectCommandOutput = await s3Client.send(command);
-
+    const response: GetObjectCommandOutput = await s3Client.send(new GetObjectCommand(params));
+    console.log('response:', response);
     logger.debug(`s3Object: ${JSON.stringify(response, null, 2)}`);
     if (!Buffer.isBuffer(response.Body)) {
       throw new Error(
@@ -45,7 +38,6 @@ export const filePull = async (record: S3EventRecord) => {
     logger.error('', err);
     const message = `Error getting object ${key} from bucket ${bucket}. Make sure they exist and your bucket is in the same region as this function.`;
     logger.error('', message);
-
     throw err;
   }
 };

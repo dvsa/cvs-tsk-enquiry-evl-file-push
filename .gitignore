@@ -116,5 +116,5 @@ dist
 # Sonar scanner artifacts
 .scannerwork
 
-# vscode files
-.vscode
+# .vsocde
+.vsocde
