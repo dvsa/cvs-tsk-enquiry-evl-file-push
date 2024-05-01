@@ -1,13 +1,23 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import logger from '../util/logger';
-import { GetObjectOutput } from 'aws-sdk/clients/s3';
-import { S3 } from 'aws-sdk';
+import {
+  GetObjectCommand,
+  GetObjectCommandOutput,
+  S3Client,
+} from '@aws-sdk/client-s3';
 import { S3EventRecord } from 'aws-lambda';
+import { Stream } from 'stream';
+import { IncomingMessage } from 'http';
 
-const s3 = new S3(
+const s3Client = new S3Client(
   (process.env.IS_LOCAL || process.env.IS_OFFLINE) && {
-    s3ForcePathStyle: true,
-    accessKeyId: 'S3RVER',
-    secretAccessKey: 'S3RVER',
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: 'S3RVER',
+      secretAccessKey: 'S3RVER',
+    },
     endpoint: 'http://localhost:4569',
   },
 );
@@ -20,19 +30,24 @@ export const filePull = async (record: S3EventRecord) => {
     Key: key,
   };
   try {
-    const s3Object: GetObjectOutput = await s3.getObject(params).promise();
+    const s3Object: GetObjectCommandOutput = await s3Client.send(
+      new GetObjectCommand(params),
+    );
 
-    logger.debug(`s3Object: ${JSON.stringify(s3Object, null, 2)}`);
-    if (!Buffer.isBuffer(s3Object.Body)) {
-      throw new Error(
-        `Body of object with ETag ${s3Object.ETag} is not a Buffer.`,
-      );
+    const chunks: Buffer[] = [];
+    for await (const chunk of Stream.Readable.from(
+      s3Object.Body as IncomingMessage,
+    )) {
+      chunks.push(chunk as Buffer);
     }
+    const buffer = Buffer.concat(chunks);
+
+    logger.debug(`s3Object: ${JSON.stringify(cleanForLogging(s3Object))}`);
 
     logger.info(`${key} pulled successfully.`);
 
     return {
-      data: s3Object.Body,
+      data: buffer,
       filename: key,
     };
   } catch (err) {
@@ -42,4 +57,13 @@ export const filePull = async (record: S3EventRecord) => {
 
     throw err;
   }
+};
+
+const cleanForLogging = (input) => {
+  const retVal = { ...input };
+  retVal.Body = { redacted: true };
+  if (retVal.$response) {
+    delete retVal.$response;
+  }
+  return retVal;
 };
