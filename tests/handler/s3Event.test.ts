@@ -1,35 +1,24 @@
-/* eslint-disable security/detect-non-literal-fs-filename */
-const mockS3 = {
-  getObject: jest.fn().mockReturnThis(),
-  promise: jest.fn(),
-};
+import type { S3Event } from 'aws-lambda';
+import { mockClient } from 'aws-sdk-client-mock';
+import { S3Client } from '@aws-sdk/client-s3';
+import event from '../resources/s3event.json';
+import eventTwo from '../resources/s3eventTwo.json';
+import { handler } from '../../src/handler/s3Event';
+import * as filePush from '../../src/filePush/filePush';
+
 const mockConnect = jest.fn();
 const mockFastPut = jest.fn();
 const mockEnd = jest.fn();
+const mockGetObjectCommand = jest.fn();
 
-jest.mock('aws-sdk', () => {
-  return { S3: jest.fn(() => mockS3) };
-});
-
-jest.mock('ssh2-sftp-client', () => {
-  return {
-    __esModule: true,
-    default: jest.fn().mockImplementation(() => {
-      return {
-        connect: mockConnect,
-        fastPut: mockFastPut,
-        end: mockEnd,
-      };
-    }),
-  };
-});
-
-import event from '../resources/s3event.json';
-import eventTwo from '../resources/s3eventTwo.json';
-import type { S3Event } from 'aws-lambda';
-import { GetObjectOutput } from 'aws-sdk/clients/s3';
-import { handler } from '../../src/handler/s3Event';
-import * as filePush from '../../src/filePush/filePush';
+jest.mock('ssh2-sftp-client', () => ({
+  __esModule: true,
+  default: jest.fn().mockImplementation(() => ({
+    connect: mockConnect,
+    fastPut: mockFastPut,
+    end: mockEnd,
+  })),
+}));
 
 describe('Test S3 Event Lambda Function', () => {
   test('should return 204', async () => {
@@ -45,11 +34,11 @@ describe('Test S3 Event Lambda Function', () => {
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
     mockEnd.mockReturnValue(Promise.resolve(void 0));
-    const getObjectOutput: GetObjectOutput = {
+    const getObjectOutput = {
       ContentType: 'text/csv',
       Body: Buffer.from('File content'),
     };
-    mockS3.promise.mockResolvedValue(getObjectOutput);
+    mockClient(S3Client).resolves(getObjectOutput);
     const eventMock: S3Event = event as S3Event;
 
     const res: string = await handler(eventMock);
@@ -70,11 +59,11 @@ describe('Test S3 Event Lambda Function', () => {
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
     mockEnd.mockReturnValue(Promise.resolve(void 0));
-    const getObjectOutput: GetObjectOutput = {
+    const getObjectOutput = {
       ContentType: 'text/csv',
       Body: Buffer.from('File content'),
     };
-    mockS3.promise.mockResolvedValue(getObjectOutput);
+    mockClient(S3Client).resolves(getObjectOutput);
     const eventMock: S3Event = event as S3Event;
     eventMock.Records[0].s3.object.key = 'VOSA_1235.csv';
     process.env.TFL_SFTP_SEND = 'true';
@@ -97,11 +86,11 @@ describe('Test S3 Event Lambda Function', () => {
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
     mockEnd.mockReturnValue(Promise.resolve(void 0));
-    const getObjectOutput: GetObjectOutput = {
+    const getObjectOutput = {
       ContentType: 'text/csv',
       Body: Buffer.from('File content'),
     };
-    mockS3.promise.mockResolvedValue(getObjectOutput);
+    mockClient(S3Client).resolves(getObjectOutput);
     const eventMock: S3Event = eventTwo as S3Event;
 
     const res: string = await handler(eventMock);
@@ -123,16 +112,16 @@ describe('Test S3 Event Lambda Function', () => {
     mockConnect.mockReturnValue(Promise.resolve(true));
     mockFastPut.mockReturnValue(Promise.resolve('uploaded'));
     mockEnd.mockReturnValue(Promise.resolve(void 0));
-    const getObjectOutput: GetObjectOutput = {
+    const getObjectOutput = {
       ContentType: 'text/csv',
       Body: Buffer.from('File content'),
     };
-    const getObjectOutputBroken: GetObjectOutput = {
+    const getObjectOutputBroken = {
       ContentType: 'text',
       Body: Buffer.from('File content'),
     };
-    mockS3.promise.mockResolvedValueOnce(getObjectOutput);
-    mockS3.promise.mockResolvedValueOnce(getObjectOutputBroken);
+    mockGetObjectCommand.mockResolvedValueOnce(getObjectOutput);
+    mockGetObjectCommand.mockResolvedValueOnce(getObjectOutputBroken);
     const eventMock: S3Event = eventTwo as S3Event;
 
     await expect(handler(eventMock)).rejects.toBe(
