@@ -1,7 +1,7 @@
 /* eslint-disable security/detect-non-literal-fs-filename */
-import { configureEvlFile } from '../../src/fileConvert/fileConvert';
 import * as fs from 'fs';
 import md5 from 'md5';
+import { configureEvlFile } from '../../src/fileConvert/fileConvert';
 
 describe('test the file config', () => {
   const testFilename = 'tests/resources/EVL_GVT_20220621.csv';
@@ -9,9 +9,9 @@ describe('test the file config', () => {
     .split('/')[2]
     .split('_')[2]
     .split('.')[0];
-  const txtFilename = 'crc32_' + dateFromFilename + '.txt';
-  const csvFilename = 'EVL_GVT_' + dateFromFilename + '.csv';
-  const finalFilename = 'EVL_GVT_' + dateFromFilename + '.tar.gz';
+  const txtFilename = `crc32_${dateFromFilename}.txt`;
+  const csvFilename = `EVL_GVT_${dateFromFilename}.csv`;
+  const finalFilename = `EVL_GVT_${dateFromFilename}.tar.gz`;
 
   let buffer: Buffer;
 
@@ -55,7 +55,7 @@ describe('test the file config', () => {
     await configureEvlFile('', buffer, 'EVL_GVT_20220621.csv');
     const csvFile = fs.readFileSync(csvFilename);
     const textFile = fs.readFileSync(txtFilename);
-    const hash = 'MD5 (EVL_GVT_20220621.csv) = ' + md5(csvFile);
+    const hash = `MD5 (EVL_GVT_20220621.csv) = ${md5(csvFile)}`;
     expect(textFile.toString()).toBe(hash);
   });
 });

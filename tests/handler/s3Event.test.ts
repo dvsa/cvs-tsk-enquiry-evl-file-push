@@ -1,3 +1,4 @@
+/* eslint-disable no-void */
 import type { S3Event } from 'aws-lambda';
 import { mockClient } from 'aws-sdk-client-mock';
 import { S3Client } from '@aws-sdk/client-s3';

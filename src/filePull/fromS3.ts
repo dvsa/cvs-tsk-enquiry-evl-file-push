@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import logger from '../util/logger';
+/* eslint-disable no-restricted-syntax */
 import {
   GetObjectCommand,
   GetObjectCommandOutput,
@@ -10,6 +10,7 @@ import {
 import { S3EventRecord } from 'aws-lambda';
 import { Stream } from 'stream';
 import { IncomingMessage } from 'http';
+import logger from '../util/logger';
 
 const s3Client = new S3Client(
   (process.env.IS_LOCAL || process.env.IS_OFFLINE) && {
