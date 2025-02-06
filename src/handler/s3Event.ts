@@ -1,10 +1,12 @@
-/* eslint-disable security/detect-non-literal-fs-filename */
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import * as fs from 'fs';
 import type { S3Event, S3EventRecord } from 'aws-lambda';
+import { randomUUID } from 'crypto';
 import { configureEvlFile } from '../fileConvert/fileConvert';
 import { filePull } from '../filePull/fromS3';
 import { filePush } from '../filePush/filePush';
-import { randomUUID } from 'crypto';
 import logger from '../util/logger';
 
 const handleEvlEvent = async (record: S3EventRecord) => {
@@ -52,8 +54,8 @@ export const handler = async (event: S3Event): Promise<string> => {
       if (fileName.startsWith('EVL_') && process.env.EVL_SFTP_SEND === 'true') {
         await handleEvlEvent(record);
       } else if (
-        fileName.startsWith('VOSA') &&
-        process.env.TFL_SFTP_SEND === 'true'
+        fileName.startsWith('VOSA')
+        && process.env.TFL_SFTP_SEND === 'true'
       ) {
         await handleTflEvent(record);
       } else {
