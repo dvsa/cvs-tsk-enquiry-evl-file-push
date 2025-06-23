@@ -84,6 +84,8 @@ describe('Test pull file from S3', () => {
     };
 
     expect(evlFileData).toStrictEqual(expectedEvlFileData);
-    expect(debugLogSpy).toHaveBeenCalledWith(`s3Object: ${JSON.stringify(expectedObject)}`);
+    expect(debugLogSpy).toHaveBeenCalledWith(
+      `s3Object: ${JSON.stringify(expectedObject)}`,
+    );
   });
 });

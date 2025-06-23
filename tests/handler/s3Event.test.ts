@@ -68,15 +68,21 @@ describe('Test S3 Event Lambda Function', () => {
     const eventMock: S3Event = event as S3Event;
     eventMock.Records[0].s3.object.key = 'EVL_1234.csv';
 
-    jest.spyOn(filePush, 'filePush').mockImplementationOnce(() => Promise.resolve());
+    jest
+      .spyOn(filePush, 'filePush')
+      .mockImplementationOnce(() => Promise.resolve());
 
     process.env.EVL_SFTP_SEND = 'true';
 
     const res: string = await handler(eventMock);
 
     expect(res).toBe('All records processed successfully.');
-    expect(infoLogSpy.mock.calls[0][0]).toBe(EventLogging.ENQ_FEED_FILE_PUSH_INIT);
-    expect(infoLogSpy.mock.calls[1][0]).toBe(EventLogging.ENQ_FEED_FILE_PUSH_SUCCESS);
+    expect(infoLogSpy.mock.calls[0][0]).toBe(
+      EventLogging.ENQ_FEED_FILE_PUSH_INIT,
+    );
+    expect(infoLogSpy.mock.calls[1][0]).toBe(
+      EventLogging.ENQ_FEED_FILE_PUSH_SUCCESS,
+    );
   });
 
   test('should return 204', async () => {
@@ -102,7 +108,9 @@ describe('Test S3 Event Lambda Function', () => {
     const res: string = await handler(eventMock);
 
     expect(res).toBe('All records processed successfully.');
-    expect(infoLogSpy.mock.calls[0][0]).toBe(EventLogging.ENQ_FEED_FILE_PUSH_INIT);
+    expect(infoLogSpy.mock.calls[0][0]).toBe(
+      EventLogging.ENQ_FEED_FILE_PUSH_INIT,
+    );
   });
 
   test('should return 204 for TFL', async () => {
@@ -186,7 +194,11 @@ describe('Test S3 Event Lambda Function', () => {
     await expect(handler(eventMock)).rejects.toBe(
       'The file EVL_GVT_20220621.csv errored during processing.',
     );
-    expect(infoLogSpy.mock.calls[0][0]).toBe(EventLogging.ENQ_FEED_FILE_PUSH_INIT);
-    expect(infoLogSpy.mock.calls[6][0]).toBe(EventLogging.ENQ_FEED_FILE_PUSH_FAILURE);
+    expect(infoLogSpy.mock.calls[0][0]).toBe(
+      EventLogging.ENQ_FEED_FILE_PUSH_INIT,
+    );
+    expect(infoLogSpy.mock.calls[6][0]).toBe(
+      EventLogging.ENQ_FEED_FILE_PUSH_FAILURE,
+    );
   });
 });
