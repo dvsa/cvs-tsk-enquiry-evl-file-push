@@ -60,6 +60,7 @@ export const handler = async (event: S3Event): Promise<string> => {
         fileName.startsWith('VOSA')
         && process.env.TFL_SFTP_SEND === 'true'
       ) {
+        // TODO - TFL data is now emailed via cert-gov-notify flow, check if this logic is still required when refactoring
         await handleTflEvent(record);
         logger.info(`${EventLogging.ENQ_FEED_FILE_PUSH_SUCCESS}`);
       } else {
