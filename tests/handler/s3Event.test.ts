@@ -6,6 +6,8 @@ import event from '../resources/s3event.json';
 import eventTwo from '../resources/s3eventTwo.json';
 import { handler } from '../../src/handler/s3Event';
 import * as filePush from '../../src/filePush/filePush';
+import logger from '../../src/util/logger';
+import { EventLogging } from '../../src/util/EventLogging';
 
 const mockConnect = jest.fn();
 const mockFastPut = jest.fn();
@@ -22,6 +24,13 @@ jest.mock('ssh2-sftp-client', () => ({
 }));
 
 describe('Test S3 Event Lambda Function', () => {
+  const infoLogSpy = jest.spyOn(logger, 'info');
+
+  afterEach(() => {
+    jest.clearAllMocks();
+    infoLogSpy.mockClear();
+  });
+
   test('should return 204', async () => {
     jest.spyOn(filePush, 'createConfig').mockImplementation(() => {
       const config = {
@@ -45,6 +54,7 @@ describe('Test S3 Event Lambda Function', () => {
     const res: string = await handler(eventMock);
 
     expect(res).toBe('All records processed successfully.');
+    expect(infoLogSpy.mock.calls[0][0]).toBe(EventLogging.ENQ_FEED_FILE_PUSH_INIT);
   });
 
   test('should return 204 for TFL', async () => {
@@ -128,5 +138,8 @@ describe('Test S3 Event Lambda Function', () => {
     await expect(handler(eventMock)).rejects.toBe(
       'The file EVL_GVT_20220621.csv errored during processing.',
     );
+
+    expect(infoLogSpy.mock.calls[0][0]).toBe(EventLogging.ENQ_FEED_FILE_PUSH_INIT);
+    expect(infoLogSpy.mock.calls[6][0]).toBe(EventLogging.ENQ_FEED_FILE_PUSH_FAILURE);
   });
 });
