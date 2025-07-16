@@ -115,3 +115,7 @@ dist
 
 # Sonar scanner artifacts
 .scannerwork
+
+# Jetbrains/VS code IDE files
+.idea/
+.history/

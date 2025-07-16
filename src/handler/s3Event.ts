@@ -1,11 +1,14 @@
-/* eslint-disable security/detect-non-literal-fs-filename */
+/* eslint-disable prefer-promise-reject-errors */
+/* eslint-disable no-await-in-loop */
+/* eslint-disable no-restricted-syntax */
 import * as fs from 'fs';
 import type { S3Event, S3EventRecord } from 'aws-lambda';
+import { randomUUID } from 'crypto';
 import { configureEvlFile } from '../fileConvert/fileConvert';
 import { filePull } from '../filePull/fromS3';
 import { filePush } from '../filePush/filePush';
-import { randomUUID } from 'crypto';
 import logger from '../util/logger';
+import { EventLogging } from '../util/EventLogging';
 
 const handleEvlEvent = async (record: S3EventRecord) => {
   const workingDir = `/tmp/evl/${randomUUID()}/`;
@@ -44,6 +47,7 @@ const handleTflEvent = async (record: S3EventRecord) => {
  */
 export const handler = async (event: S3Event): Promise<string> => {
   logger.debug(`event: ${JSON.stringify(event, null, 2)}`);
+  logger.info(`${EventLogging.ENQ_FEED_FILE_PUSH_INIT}`);
 
   for (const record of event.Records) {
     try {
@@ -51,16 +55,19 @@ export const handler = async (event: S3Event): Promise<string> => {
 
       if (fileName.startsWith('EVL_') && process.env.EVL_SFTP_SEND === 'true') {
         await handleEvlEvent(record);
+        logger.info(`${EventLogging.ENQ_FEED_FILE_PUSH_SUCCESS}`);
       } else if (
-        fileName.startsWith('VOSA') &&
-        process.env.TFL_SFTP_SEND === 'true'
+        fileName.startsWith('VOSA')
+        && process.env.TFL_SFTP_SEND === 'true'
       ) {
         await handleTflEvent(record);
+        logger.info(`${EventLogging.ENQ_FEED_FILE_PUSH_SUCCESS}`);
       } else {
         logger.info('Did not send to SFTP server, check the env vars');
       }
     } catch (err) {
       logger.error('', err);
+      logger.info(`${EventLogging.ENQ_FEED_FILE_PUSH_FAILURE}`);
       return Promise.reject(
         `The file ${record.s3.object.key} errored during processing.`,
       );
