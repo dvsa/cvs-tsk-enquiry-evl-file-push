@@ -1,19 +1,14 @@
+import {
+  GetSecretValueCommand,
+  SecretsManager,
+} from '@aws-sdk/client-secrets-manager';
+import { mockClient } from 'aws-sdk-client-mock';
 import { getSecret } from '../../src/util/getSecret';
 
-jest.mock('aws-sdk', () => {
-  const mSecretsManagerInstance = {
-    getSecretValue: () => {
-      return {
-        promise: jest
-          .fn()
-          .mockReturnValue({ SecretString: 'Secret From Secrets Manager' }),
-      };
-    },
-  };
-  const mSecretsManager = jest.fn(() => mSecretsManagerInstance);
-
-  return { SecretsManager: mSecretsManager };
-});
+const mockSecretsManager = mockClient(SecretsManager);
+mockSecretsManager
+  .on(GetSecretValueCommand)
+  .resolves({ SecretString: 'Secret From Secrets Manager' });
 
 describe('getSecret functions', () => {
   it('GIVEN a variable WHEN variable not local THEN get variable from Secrets Manager.', async () => {
